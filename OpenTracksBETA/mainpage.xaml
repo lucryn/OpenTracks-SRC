@@ -1,0 +1,975 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="OpenTracksBETA.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    toolkit:TransitionService.NavigationInTransition="{StaticResource NavigationInTransition}"
+    toolkit:TransitionService.NavigationOutTransition="{StaticResource NavigationOutTransition}"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait"  Orientation="Portrait"
+    shell:SystemTray.IsVisible="False">
+
+    <phone:PhoneApplicationPage.Resources>
+        <Storyboard x:Name="SlideOutStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="SlideTransform"
+                Storyboard.TargetProperty="X"
+                From="0" To="480"
+                Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+        <ControlTemplate x:Key="CircularThumbTemplate" TargetType="Thumb">
+            <Ellipse Fill="{TemplateBinding Background}"
+                 Stroke="{TemplateBinding BorderBrush}"
+                 StrokeThickness="{TemplateBinding BorderThickness}"/>
+        </ControlTemplate>
+        <LinearGradientBrush x:Key="FloatingBarGradient" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#E6FFFFFF" Offset="0" />
+            <GradientStop Color="#D9FFFFFF" Offset="0.5" />
+            <GradientStop Color="#CCF0F0F0" Offset="1" />
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="PurpleOrangeGradient" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#FF8A2BE2" Offset="0.0"/>
+            <GradientStop Color="#FFFFA500" Offset="1.0"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GlowGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FF8A2BE2" Offset="0.0"/>
+            <GradientStop Color="#FFFFA500" Offset="1.0"/>
+        </LinearGradientBrush>
+        <Storyboard x:Name="MarqueeStoryboard" RepeatBehavior="Forever">
+            <DoubleAnimation Storyboard.TargetName="TrackTransform"
+                     Storyboard.TargetProperty="TranslateX"
+                     From="300" To="-600"
+                     Duration="0:0:10" />
+        </Storyboard>
+        <Style x:Key="CircularButtonStyle" TargetType="Button">
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="40"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Metro Slider Style -->
+        <Style x:Key="SliderStyle1" TargetType="Slider">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FF005A9E"/>
+            <Setter Property="Maximum" Value="100"/>
+            <Setter Property="Minimum" Value="0"/>
+            <Setter Property="Value" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver"/>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" 
+                                                     To="1.5" 
+                                                     Storyboard.TargetProperty="(UIElement.Opacity)" 
+                                                     Storyboard.TargetName="HorizontalThumb"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid Background="{TemplateBinding Background}">
+                                <Grid Margin="0">
+                                    <Rectangle x:Name="HorizontalTrack" 
+                                       Fill="{TemplateBinding Background}" 
+                                       Height="4" 
+                                       Margin="0"/>
+                                    <Rectangle x:Name="HorizontalTrackHighlight" 
+                                       Fill="{TemplateBinding Foreground}" 
+                                       Height="4" 
+                                       HorizontalAlignment="Left" 
+                                       Margin="0"/>
+                                    <Thumb x:Name="HorizontalThumb" 
+                                   Height="24" 
+                                   Width="24" 
+                                   DataContext="{TemplateBinding Value}" 
+                                   Background="{TemplateBinding Foreground}" 
+                                   Template="{StaticResource CircularThumbTemplate}">
+                                        <Thumb.RenderTransform>
+                                            <TranslateTransform X="0" Y="-10"/>
+                                        </Thumb.RenderTransform>
+                                    </Thumb>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Storyboard x:Name="SlideUpStoryboard">
+            <DoubleAnimation
+            Storyboard.TargetName="NowPlayingTransform"
+            Storyboard.TargetProperty="Y"
+            To="0"
+            Duration="0:0:0.3"/>
+        </Storyboard>
+
+        <Storyboard x:Name="SlideDownStoryboard">
+            <DoubleAnimation
+            Storyboard.TargetName="NowPlayingTransform"
+            Storyboard.TargetProperty="Y"
+            To="300"
+            Duration="0:0:0.3"/>
+        </Storyboard>
+    </phone:PhoneApplicationPage.Resources>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" RenderTransformOrigin="0.5,0.5"
+      Opacity="1">
+        <Grid.Background>
+            <ImageBrush ImageSource="/Assets/bg1.png" Stretch="UniformToFill"/>
+        </Grid.Background>
+
+        <Grid.RenderTransform>
+            <TranslateTransform x:Name="SlideTransform" />
+        </Grid.RenderTransform>
+
+        <!--Panorama control-->
+        <phone:Panorama x:Name="OpenTracksM" SelectionChanged="OpenTracksM_SelectionChanged">
+            <phone:Panorama.Title>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,20,0,0">
+                    <TextBlock Text="{Binding Path=LocalizedResources.String38, Source={StaticResource LocalizedStrings}}"
+           FontSize="135"
+           FontWeight="ExtraLight"
+           Margin="0,0,27,10"
+           FontFamily="Segoe WP Light">
+                        <TextBlock.Foreground>
+                            <!-- Warm contrasting gradient -->
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <!-- Soft white for clarity -->
+                                <GradientStop Color="White" Offset="0.0"/>
+                                <!-- Vibrant orange accent -->
+                                <GradientStop Color="#FFD6D6D6" Offset="0.5"/>
+                                <!-- Rich magenta accent -->
+                                <GradientStop Color="#FFD6D6D6" Offset="1.0"/>
+                            </LinearGradientBrush>
+                        </TextBlock.Foreground>
+                    </TextBlock>
+                </Grid>
+            </phone:Panorama.Title>
+
+            <!--welcome-->
+            <phone:PanoramaItem Header="welcome" x:Name="HomeItem" Opacity="0.9">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,-25,10,145">
+                    <StackPanel Margin="12,0,12,0">
+                        <TextBlock Text="Hey! ready for another music joruney?"
+                       FontSize="20"
+                       FontWeight="ExtraLight"
+                       FontFamily="Segoe WP Light"
+                       Foreground="#CCFFFFFF"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,0"/>
+
+                        <!-- Item 1: 24/7 Live -->
+                        <Border Background="#FF404040"
+                    Margin="0,12,0,0"
+                    Padding="24,20"
+                    Tag="NavigateToDJ_Tap"
+                    Tap="NavigateToDJ_Tap"
+                    BorderThickness="0">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="24/7 Live"
+                                   FontSize="48"
+                                   FontWeight="ExtraLight"
+                                   Foreground="White"
+                                   FontFamily="Segoe WP Light"
+                                   HorizontalAlignment="Left"/>
+                                    <TextBlock Text="Live streaming radio"
+                                   FontSize="20"
+                                   FontWeight="ExtraLight"
+                                   Foreground="#CCFFFFFF"
+                                   FontFamily="Segoe WP Light"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <TextBlock Text="❚❚"
+                               FontSize="28"
+                               Foreground="#FF005A9E"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Item 3: Personal Hub -->
+                        <Border Background="#FF2A2A2A"
+                    Margin="0,12,0,0"
+                    Padding="24,20"
+                    Tag="NavigateToTracks_Tap"
+                    Tap="NavigateToTracks_Tap"
+                    BorderThickness="0">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="Personal Hub"
+                                   FontSize="48"
+                                   FontWeight="ExtraLight"
+                                   Foreground="White"
+                                   FontFamily="Segoe WP Light"
+                                   HorizontalAlignment="Left"/>
+                                    <TextBlock Text="explore more tracks in hub!"
+                                   FontSize="20"
+                                   FontWeight="ExtraLight"
+                                   Foreground="#CCFFFFFF"
+                                   FontFamily="Segoe WP Light"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <TextBlock Text="☰"
+                               FontSize="28"
+                               Foreground="#FF005A9E"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Item 2: Marketplace -->
+                        <Border Background="#FF333333"
+                    Margin="0,12,0,0"
+                    Padding="24,20"
+                    Tag="NavigateToSettings_Tap"
+                    Tap="NavigateToSettings_Tap"
+                    BorderThickness="0">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="Marketplace"
+                                   FontSize="48"
+                                   FontWeight="ExtraLight"
+                                   Foreground="White"
+                                   FontFamily="Segoe WP Light"
+                                   HorizontalAlignment="Left"/>
+                                    <TextBlock Text="Spotify, YTMusic and more..!"
+                                   FontSize="20"
+                                   FontWeight="ExtraLight"
+                                   Foreground="#CCFFFFFF"
+                                   FontFamily="Segoe WP Light"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <TextBlock Text="▣"
+                               FontSize="28"
+                               Foreground="#FF005A9E"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Item 4: My Account -->
+                        <Border Background="#FF303030"
+                    Margin="0,12,0,0"
+                    Padding="24,20"
+                    Tag="TextBlock_Tap"
+                    Tap="TextBlock_Tap"
+                    BorderThickness="0">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="My Account"
+                                   FontSize="48"
+                                   FontWeight="ExtraLight"
+                                   Foreground="White"
+                                   FontFamily="Segoe WP Light"
+                                   HorizontalAlignment="Left"/>
+                                    <TextBlock Text="Profile &amp; preferences"
+                                   FontSize="20"
+                                   FontWeight="ExtraLight"
+                                   Foreground="#CCFFFFFF"
+                                   FontFamily="Segoe WP Light"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <TextBlock Text="👤"
+                               FontSize="28"
+                               Foreground="#FF005A9E"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Item 5: App Settings -->
+                        <Border Background="#FF383838"
+                    Margin="0,12,0,0"
+                    Padding="24,20"
+                    Tag="TextBlock2_Tap"
+                    Tap="TextBlock2_Tap"
+                    BorderThickness="0">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="App Settings"
+                                   FontSize="48"
+                                   FontWeight="ExtraLight"
+                                   Foreground="White"
+                                   FontFamily="Segoe WP Light"
+                                   HorizontalAlignment="Left"/>
+                                    <TextBlock Text="Customize your experience"
+                                   FontSize="20"
+                                   FontWeight="ExtraLight"
+                                   Foreground="#CCFFFFFF"
+                                   FontFamily="Segoe WP Light"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <TextBlock Text="⚙"
+                               FontSize="28"
+                               Foreground="#FF005A9E"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Item 6: About -->
+                        <Border Background="#FF3C3C3C"
+                    Margin="0,12,0,0"
+                    Padding="24,20"
+                    Tag="TextBlock1_Tap"
+                    Tap="TextBlock1_Tap"
+                    BorderThickness="0">
+                            <Grid>
+                                <StackPanel>
+                                    <TextBlock Text="About"
+                                   FontSize="48"
+                                   FontWeight="ExtraLight"
+                                   Foreground="White"
+                                   FontFamily="Segoe WP Light"
+                                   HorizontalAlignment="Left"/>
+                                    <TextBlock Text="App info &amp; credits"
+                                   FontSize="20"
+                                   FontWeight="ExtraLight"
+                                   Foreground="#CCFFFFFF"
+                                   FontFamily="Segoe WP Light"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <TextBlock Text="ⓘ"
+                               FontSize="28"
+                               Foreground="#FF005A9E"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Login Status Panel -->
+                        <Border Background="#FF444444"
+                    Margin="0,24,0,12"
+                    Padding="20,16"
+                    x:Name="LoginStatusPanel"
+                    Visibility="Collapsed"
+                    BorderThickness="0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Ellipse Width="48"
+                             Height="48"
+                             Fill="#FF005A9E"
+                             VerticalAlignment="Center">
+                                    <Ellipse.RenderTransform>
+                                        <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                    </Ellipse.RenderTransform>
+                                </Ellipse>
+
+                                <StackPanel Grid.Column="1"
+                                Margin="16,0,0,0"
+                                VerticalAlignment="Center">
+                                    <TextBlock Text="Signed in as"
+                                   FontSize="18"
+                                   FontWeight="ExtraLight"
+                                   Foreground="#FFCCCCCC"
+                                   FontFamily="Segoe WP Light"/>
+                                    <TextBlock x:Name="LoggedInUserText"
+                                   FontSize="22"
+                                   FontWeight="ExtraLight"
+                                   Foreground="White"
+                                   FontFamily="Segoe WP Light"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </phone:PanoramaItem>
+
+            <!-- Panorama item one -->
+            <phone:PanoramaItem Header="{Binding Path=LocalizedResources.String45, Source={StaticResource LocalizedStrings}}" x:Name="NewTracksItem">
+                <Grid x:Name="NewTracksGrid" Margin="0">
+                    <Grid x:Name="SignedInContent1" Visibility="Visible"
+              VerticalAlignment="Stretch"
+              HorizontalAlignment="Stretch">
+                        <TextBlock Text="These tracks will be avaliable in limited-time!"
+                                       FontSize="20"
+                                       FontWeight="ExtraLight"
+                                       FontFamily="Segoe WP Light"
+                                       Foreground="#CCFFFFFF"
+                                       TextWrapping="Wrap"
+                                       Margin="15,-40,0,471"/>
+                        <ListBox x:Name="NewTracks"
+                     ItemsSource="{Binding NewTracks}"
+                     SelectionChanged="NewTracks_SelectionChanged"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     Margin="16,2,-4,147">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,10,0,10"
+                                    Hold="Track_Hold">
+                                        <TextBlock Text="{Binding Title}"
+                                       FontSize="36"
+                                       FontWeight="ExtraLight"
+                                       FontFamily="Segoe WP Light"
+                                       Foreground="White"
+                                       TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Artist}"
+                                       FontSize="28"
+                                       FontWeight="ExtraLight"
+                                       FontFamily="Segoe WP Light"
+                                       Foreground="#CCFFFFFF"
+                                       TextWrapping="Wrap"
+                                       Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+
+                    <StackPanel x:Name="GuestMessage1"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="20">
+                        <TextBlock Text="Please sign in to use this function"
+                       FontSize="24"
+                       TextAlignment="Center"
+                       Margin="0,0,0,10"/>
+                        <Button Content="Sign In"
+                    Click="GoToLogin_Click"
+                    Margin="10"/>
+                    </StackPanel>
+                </Grid>
+            </phone:PanoramaItem>
+
+            <!-- Panorama item one -->
+            <phone:PanoramaItem Header="new tracks" x:Name="TopHitsItem">
+                <Grid x:Name="TracksGrid" Margin="0">
+                    <Grid x:Name="SignedInContent2" Visibility="Visible" Margin="0,0,0,0">
+                        <ListBox x:Name="Tracks"
+                     ItemsSource="{Binding Tracks}"
+                     SelectionChanged="Tracks_SelectionChanged"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     Margin="16,-28,-4,149">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,10,0,10"
+                                    Hold="Track_Hold">
+                                        <TextBlock Text="{Binding Title}"
+                                       FontSize="36"
+                                       FontWeight="ExtraLight"
+                                       FontFamily="Segoe WP Light"
+                                       Foreground="White"
+                                       TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Artist}"
+                                       FontSize="28"
+                                       FontWeight="ExtraLight"
+                                       FontFamily="Segoe WP Light"
+                                       Foreground="#CCFFFFFF"
+                                       TextWrapping="Wrap"
+                                       Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+
+                    <StackPanel x:Name="GuestMessage2"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="20">
+                        <TextBlock Text="Please sign in to use this function"
+                       FontSize="24"
+                       TextAlignment="Center"
+                       Margin="0,0,0,10"/>
+                        <Button Content="Sign In"
+                    Click="GoToLogin_Click"
+                    Margin="10"/>
+                    </StackPanel>
+                </Grid>
+            </phone:PanoramaItem>
+
+            <!-- Panorama item two -->
+            <phone:PanoramaItem Header="{Binding Path=LocalizedResources.String47, Source={StaticResource LocalizedStrings}}" x:Name="TracksItem">
+                <Grid x:Name="AllTracksGrid" Margin="-12,-49,0,0">
+                    <!-- Search Box at the top -->
+                    <StackPanel x:Name="og">
+                        <TextBox x:Name="SearchBox"
+                     Height="78"
+                     Margin="12,12,12,10"
+                     TextChanged="SearchBox_TextChanged"
+                     VerticalAlignment="Top"/>
+
+                        <!-- Search Results List -->
+                        <ListBox x:Name="SearchResults"
+                     ItemsSource="{Binding FilteredTracks}"
+                     SelectionChanged="TracksList_SelectionChanged" 
+                     Margin="12,0,0,0"
+                     VerticalAlignment="Stretch"
+                     HorizontalAlignment="Stretch"
+                     Visibility="Collapsed">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="12,10,0,10">
+                                        <TextBlock Text="{Binding Title}"
+                                       FontSize="36"
+                                       FontWeight="ExtraLight"
+                                       FontFamily="Segoe WP Light"
+                                       Foreground="White"
+                                       TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Artist}"
+                                       FontSize="28"
+                                       FontWeight="ExtraLight"
+                                       FontFamily="Segoe WP Light"
+                                       Foreground="#CCFFFFFF"
+                                       TextWrapping="Wrap"
+                                       Margin="0,5,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <!-- Regular AllTracks List (shown when not searching) -->
+                        <Grid x:Name="SignedInContent3" Visibility="Visible" Margin="33,0,31,0" Height="342">
+                            <ListBox x:Name="AllTracks"
+                         ItemsSource="{Binding AllTracks}"
+                         SelectionChanged="AllTracks_SelectionChanged"
+                         VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch" Margin="0,0,0,43"
+                                     >
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Margin="0,10,0,10"
+                                        Hold="Track_Hold">
+                                            <TextBlock Text="{Binding Title}"
+                                           FontSize="36"
+                                           FontWeight="ExtraLight"
+                                           FontFamily="Segoe WP Light"
+                                           Foreground="White"
+                                           TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding Artist}"
+                                           FontSize="28"
+                                           FontWeight="ExtraLight"
+                                           FontFamily="Segoe WP Light"
+                                           Foreground="#CCFFFFFF"
+                                           TextWrapping="Wrap"
+                                           Margin="0,5,0,0"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Message shown only when NOT signed in -->
+                    <StackPanel x:Name="GuestMessage3"
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="20">
+                        <TextBlock Text="Please sign in to use this function"
+                       FontSize="24"
+                       TextAlignment="Center"
+                       Margin="0,0,0,10"/>
+                        <Button Content="Sign In"
+                    Click="GoToLogin_Click"
+                    Margin="10"/>
+                    </StackPanel>
+                </Grid>
+            </phone:PanoramaItem>
+
+           
+            <!--Panorama item one-->
+            <phone:PanoramaItem Header="{Binding Path=LocalizedResources.String52, Source={StaticResource LocalizedStrings}}">
+                <TextBlock HorizontalAlignment="Left" Margin="16,-22,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="487" Width="400" FontSize="24">
+                	<Run Text="{Binding Path=LocalizedResources.String53, Source={StaticResource LocalizedStrings}}"/><Run Text=" : Stable 1.1"/>
+                	<LineBreak/>
+                	<Run Text="{Binding Path=LocalizedResources.String54, Source={StaticResource LocalizedStrings}}"/><Run Text=": AMOLED Update 1"/>
+                	<LineBreak/>
+                	<Run Text="{Binding Path=LocalizedResources.String55, Source={StaticResource LocalizedStrings}}"/>
+                	<LineBreak/>
+                	<Run Text="{Binding Path=LocalizedResources.String56, Source={StaticResource LocalizedStrings}}"/>
+                	<LineBreak/>
+                	<LineBreak/>
+                	<Run Text="{Binding Path=LocalizedResources.String57, Source={StaticResource LocalizedStrings}}"/>
+                	<LineBreak/>
+                	<Run Text="ChockingNetDude"/>
+                	<LineBreak/>
+                	<LineBreak/>
+                	<Run Text="{Binding Path=LocalizedResources.String58, Source={StaticResource LocalizedStrings}}"/>
+                	<LineBreak/>
+                	<Run Text="droidjacks4@gmail.com"/>
+                	<LineBreak/>
+                	<Run Text="Telegram@chockingnetdude"/>
+                </TextBlock>
+            </phone:PanoramaItem>
+        </phone:Panorama>
+
+        <!-- Mini Player at Bottom -->
+
+        <!-- Mini Player at Bottom - Updated to match chillin.xaml -->
+        <StackPanel VerticalAlignment="Bottom"
+            HorizontalAlignment="Stretch"
+            Background="#FF272727"
+            Height="140"
+            Margin="0">
+
+            <!-- 🔊 Top Row: Track Title & Play Button -->
+            <StackPanel Orientation="Horizontal"
+                Height="80"
+                Margin="0">
+                <TextBlock x:Name="CurrentTrackName"
+           FontSize="40"
+           FontWeight="Light"
+           Foreground="White"
+           Text=" It's empty here :("
+           TextWrapping="NoWrap"
+           RenderTransformOrigin="0.5,0.5"
+           VerticalAlignment="Center"
+           HorizontalAlignment="Left"
+           Margin="10,16,0,4"
+           Width="372"
+           Height="60"
+           Tap="MiniControlBarWrapper_Tap">
+                    <TextBlock.RenderTransform>
+                        <!-- Make sure this is CompositeTransform, not TranslateTransform -->
+                        <CompositeTransform x:Name="TrackTransform" />
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+
+                <Button x:Name="MiniPlayPauseButton"
+                Width="66"
+                Height="70"
+                Content="▶"
+                FontSize="32"
+                FontWeight="Bold"
+                Background="{x:Null}"
+                Foreground="White"
+                BorderBrush="White"
+                BorderThickness="2"
+                Style="{StaticResource CircularButtonStyle}"
+                Click="PlayPauseButton_Click"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                Margin="10,10,10,0" />
+            </StackPanel>
+
+            <!-- 📊 Slider Row: Time Labels + Seek Bar -->
+            <StackPanel Orientation="Horizontal"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Height="40"
+                Margin="10,0,10,10">
+
+                <TextBlock x:Name="StartTimeLabel"
+                   Text="0:00"
+                   FontSize="18"
+                   Foreground="White"
+                   VerticalAlignment="Center"
+                   Margin="0,10,10,0"
+                   Height="30" />
+
+                <Slider x:Name="ProgressSlider"
+                Minimum="0"
+                Maximum="100"
+                Value="0"
+                Width="346"
+                Height="118"
+                Background="#FF5F5F5F"
+                Foreground="White"
+                BorderBrush="{x:Null}"
+                ValueChanged="ProgressSlider_ValueChanged"
+                VerticalAlignment="Center"
+                Margin="0,-23,0,-55" />
+
+                <TextBlock x:Name="EndTimeLabel"
+                   Text="0:00"
+                   FontSize="18"
+                   Foreground="White"
+                   VerticalAlignment="Center"
+                   Margin="10,0,0,0" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Full Now Playing Panel -->
+        <!-- Metro Style Full Screen Player -->
+        <Grid x:Name="NowPlayingPanel"
+      VerticalAlignment="Stretch"
+      HorizontalAlignment="Stretch"
+      RenderTransformOrigin="0.5,0.5" 
+      Visibility="Collapsed"
+      Background="#FF1A1A1A">
+
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <TranslateTransform x:Name="NowPlayingTransform" Y="800"/>
+                </TransformGroup>
+            </Grid.RenderTransform>
+
+            <!-- Close Button (Top Right) -->
+            <Button x:Name="CloseNowPlayingButton"
+            Click="MinimizeNowPlaying_Click"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Width="72"
+            Height="72"
+            BorderThickness="0"
+            Background="Transparent"
+            Margin="0,40,20,0">
+                <Grid>
+                    <Ellipse Width="44"
+                     Height="44"
+                     Fill="#33FFFFFF"/>
+                    <TextBlock Text="✕"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+                </Grid>
+            </Button>
+
+            <!-- Main Content -->
+            <Grid VerticalAlignment="Center"
+          HorizontalAlignment="Center"
+          Width="440"
+          Margin="0,80,0,20">
+
+                <!-- Track Info with Metro typography -->
+                <StackPanel Margin="0,50,0,200"
+                    HorizontalAlignment="Center">
+                    <TextBlock x:Name="NowPlayingTitle"
+                       Text="Now Playing"
+                       FontSize="48"
+                       FontWeight="Light"
+                       Foreground="White"
+                       FontFamily="Segoe WP Light"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       Margin="0,0,0,12"
+                       MaxWidth="400"/>
+
+                    <TextBlock x:Name="NowPlayingArtist"
+                       Text="Artist Name"
+                       FontSize="28"
+                       FontWeight="Light"
+                       Foreground="#FFCCCCCC"
+                       FontFamily="Segoe WP Light"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       Margin="0,0,0,8"/>
+
+                    <TextBlock x:Name="NowPlayingSource"
+                       Text="From: Browse"
+                       FontSize="20"
+                       FontWeight="Light"
+                       Foreground="#FF888888"
+                       FontFamily="Segoe WP Light"
+                       TextAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Progress Bar -->
+                <Grid Margin="0,0,0,40"
+              VerticalAlignment="Bottom">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Time Labels -->
+                    <Grid Grid.Row="0"
+                  Margin="0,0,0,8">
+                        <TextBlock x:Name="StartTimeLabel1"
+                           Text="0:00"
+                           FontSize="18"
+                           FontWeight="Light"
+                           Foreground="#FFCCCCCC"
+                           FontFamily="Segoe WP Light"
+                           HorizontalAlignment="Left"/>
+
+                        <TextBlock x:Name="EndTimeLabel1"
+                           Text="0:00"
+                           FontSize="18"
+                           FontWeight="Light"
+                           Foreground="#FFCCCCCC"
+                           FontFamily="Segoe WP Light"
+                           HorizontalAlignment="Right"/>
+                    </Grid>
+
+                    <!-- Metro-style Progress Bar -->
+                    <Grid Grid.Row="1"
+                  Height="4"
+                  Background="#FF444444">
+                        <Rectangle x:Name="ProgressFill"
+                           Fill="#FF005A9E"
+                           HorizontalAlignment="Left"
+                           Width="0"
+                           Height="4"/>
+                    </Grid>
+
+                    <!-- Hidden Slider for interaction -->
+                    <Slider x:Name="FullScreenProgressSlider"
+                    Grid.Row="1"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="0"
+                    Height="40"
+                    Background="Transparent"
+                    Foreground="Transparent"
+                    BorderBrush="Transparent"
+                    Style="{StaticResource SliderStyle1}"
+                    ValueChanged="FullScreenProgressSlider_ValueChanged"
+                    Opacity="0"/>
+                </Grid>
+
+                <!-- Metro-style Playback Controls -->
+                <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,60"
+                    VerticalAlignment="Bottom">
+                    <!-- Previous Button -->
+                    <Button x:Name="PrevButton"
+                    Width="72"
+                    Height="72"
+                    Background="Transparent"
+                    Click="BackwardButton_Click"
+                    Margin="0,0,24,0">
+                        <Grid>
+                            <Ellipse Width="56"
+                             Height="56"
+                             Fill="#33FFFFFF"/>
+                            <TextBlock Text="⏮"
+                               FontSize="24"
+                               FontWeight="Light"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+
+                    <!-- Play/Pause Button (Prominent Metro Circle) -->
+                    <Button x:Name="FullPlayPauseButton"
+                    Width="88"
+                    Height="88"
+                    Click="PlayPauseButton_Click"
+                    Margin="0,0,24,0">
+                        <Grid>
+                            <Ellipse Fill="#FF005A9E"/>
+                            <TextBlock x:Name="PlayPauseText"
+                               Text="▶"
+                               FontSize="32"
+                               FontWeight="Light"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+
+                    <!-- Next Button -->
+                    <Button x:Name="NextButton"
+                    Width="72"
+                    Height="72"
+                    Background="Transparent"
+                    Click="ForwardButton_Click">
+                        <Grid>
+                            <Ellipse Width="56"
+                             Height="56"
+                             Fill="#33FFFFFF"/>
+                            <TextBlock Text="⏭"
+                               FontSize="24"
+                               FontWeight="Light"
+                               Foreground="White"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                        </Grid>
+                    </Button>
+                </StackPanel>
+
+                <!-- Volume Control (Metro Style) -->
+                <StackPanel Margin="0,40,0,0"
+                    VerticalAlignment="Bottom">
+                    <Grid Margin="0,0,0,12">
+                        <TextBlock Text="VOLUME"
+                           FontSize="16"
+                           FontWeight="Light"
+                           Foreground="#FF888888"
+                           FontFamily="Segoe WP Light"
+                           HorizontalAlignment="Left"/>
+
+                        <TextBlock x:Name="VolumeLabel"
+                           Text="100%"
+                           FontSize="16"
+                           FontWeight="Light"
+                           Foreground="#FF888888"
+                           FontFamily="Segoe WP Light"
+                           HorizontalAlignment="Right"/>
+                    </Grid>
+
+                    <!-- Metro-style Volume Slider -->
+                    <Grid Height="4"
+                  Background="#FF444444"
+                  Margin="0,0,0,8">
+                        <Rectangle x:Name="VolumeFill"
+                           Fill="#FF005A9E"
+                           HorizontalAlignment="Left"
+                           Width="100"
+                           Height="4"/>
+                    </Grid>
+
+                    <Slider x:Name="VolumeSlider"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="100"
+                    Height="40"
+                    Background="Transparent"
+                    Foreground="Transparent"
+                    BorderBrush="Transparent"
+                    ValueChanged="VolumeSlider_ValueChanged"
+                    Opacity="0"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        <MediaElement x:Name="AudioPlayer" 
+              AutoPlay="False" 
+              Visibility="Collapsed"
+              MediaOpened="AudioPlayer_MediaOpened"
+              MediaEnded="AudioPlayer_MediaEnded"
+              MediaFailed="AudioPlayer_MediaFailed" />
+    </Grid>
+</phone:PhoneApplicationPage>
