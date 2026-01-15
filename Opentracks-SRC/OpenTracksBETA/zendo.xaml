@@ -1,0 +1,222 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="OpenTracksBETA.Zendo"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
+    Orientation="Portrait" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="800" d:DesignWidth="480">
+
+    <Grid x:Name="LayoutRoot" Background="#FF0A0A0A">
+        <Grid.Resources>
+            <Storyboard x:Name="MarqueeStoryboard" RepeatBehavior="Forever">
+                <DoubleAnimation Storyboard.TargetName="TrackTransform"
+                         Storyboard.TargetProperty="X"
+                         From="300" To="-600"
+                         Duration="0:0:10" />
+            </Storyboard>
+        </Grid.Resources>
+
+        <!-- Panorama -->
+        <phone:Panorama Title="opzendo">
+            <phone:Panorama.Background>
+                <ImageBrush ImageSource="Assets/bg1.png" Stretch="UniformToFill" Opacity="0.3"/>
+            </phone:Panorama.Background>
+
+            <!-- Find Music Tab -->
+            <phone:PanoramaItem Header="Find Music">
+                <StackPanel Margin="10,-10,20,124">
+
+                    <!-- Search Row: TextBox Left + Image Button Right -->
+                    <Grid Margin="0,10,0,20" Width="400" Height="60">
+                        <!-- TextBox Container -->
+                        <Border Background="#33FFFFFF"
+            CornerRadius="12"
+            BorderBrush="#22FFFFFF"
+            BorderThickness="1"
+            Width="320"
+            HorizontalAlignment="Left" Margin="0,0,0,10">
+                            <TextBox x:Name="SearchBox"
+         Height="48"
+         Margin="10,6"
+         FontSize="12"
+         Foreground="White"
+         Background="Transparent"
+         BorderThickness="0"
+         VerticalAlignment="Center"
+         InputScope="Text"/>
+                        </Border>
+
+                        <!-- Search Button Container -->
+                        <Button Click="SearchButton_Click"
+        Width="106"
+        HorizontalAlignment="Right"
+        Margin="0,-18,-16,-10"
+        Background="Transparent"
+        BorderThickness="0">
+                            <Border Width="80"
+            Height="63"
+            Background="#22FFFFFF"
+            BorderBrush="#33FFFFFF"
+            BorderThickness="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+                                <Image Source="Icons/search1.png"
+               Width="36"
+               Height="36"
+               Stretch="Uniform"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"/>
+                            </Border>
+                        </Button>
+                    </Grid>
+
+                    <!-- Results List -->
+                    <ListBox x:Name="ResultsList"
+                             Width="400"
+                             Height="276"
+                             Foreground="White"
+                             SelectionChanged="ResultsList_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#22FFFFFF"
+                                        CornerRadius="15"
+                                        Margin="5"
+                                        Padding="10"
+                                        BorderBrush="#22FFFFFF"
+                                        BorderThickness="1">
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Source="{Binding Cover}" Width="60" Height="60" Margin="0,0,10,0"/>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Title}" FontWeight="Bold" Foreground="White" FontSize="18"/>
+                                                <TextBlock Text="{Binding Artist}" FontStyle="Italic" Foreground="#FFCCCCCC" FontSize="14"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </phone:PanoramaItem>
+
+            <!-- Randoms Tab -->
+            <phone:PanoramaItem Header="Randoms">
+                <StackPanel Margin="10,-10,20,124">
+                    <TextBlock Text="Don't know what to play? let a dice to decide."
+                   Foreground="White"
+                   FontSize="20"
+                   FontWeight="ExtraLight"
+                   HorizontalAlignment="Left" Width="385" Margin="4,0,0,0"/>
+                    <Button Click="RandomButton_Click"
+        Width="366"
+        Height="100"
+        HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+        Background="Transparent"
+        BorderThickness="0" Margin="-43,0,0,0">
+                        <Border Background="#33FFFFFF"
+            CornerRadius="30"
+            BorderBrush="#22FFFFFF"
+            BorderThickness="1"
+            Width="275"
+            Height="60"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+                            <TextBlock Text="Get Random Track"
+                   Foreground="White"
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"/>
+                        </Border>
+                    </Button>
+
+                    <Border Background="#22FFFFFF"
+                CornerRadius="15"
+                Padding="10"
+                BorderBrush="#22FFFFFF"
+                BorderThickness="1"
+                Margin="0,0,0,10">
+                        <StackPanel x:Name="RandomTrackPanel" Visibility="Collapsed">
+                            <Image x:Name="RandomCover" Width="100" Height="100" Stretch="UniformToFill" Margin="0,0,0,10"/>
+                            <TextBlock x:Name="RandomTitle" FontSize="22" FontWeight="Bold" Foreground="White" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="RandomArtist" FontSize="18" FontStyle="Italic" Foreground="#FFCCCCCC" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </phone:PanoramaItem>
+
+            <!-- About Tab -->
+            <phone:PanoramaItem Header="About">
+                <Border Background="#22FFFFFF" CornerRadius="20" Margin="16,-22,16,138" Padding="20">
+                    <TextBlock FontWeight="ExtraLight"
+                               TextWrapping="Wrap"
+                               FontSize="24"
+                               Foreground="White">
+                        <Run Text="opzendo is based on zendo music service by astrokamin, this store provides basic function with search, playback, and also random music too!"/>
+                        <LineBreak/><LineBreak/>
+                        <Run Text="Version: 1.0 Stable"/><LineBreak/>
+                        <Run Text="Credits: dc@Zemonkamin"/><LineBreak/>
+                        <Run Text="Ported By: ChockingNetDude"/>
+                    </TextBlock>
+                </Border>
+            </phone:PanoramaItem>
+        </phone:Panorama>
+
+        <!-- Mini Player Bar -->
+        <Border Background="#33FFFFFF"
+                CornerRadius="20"
+                Margin="20"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Height="100"
+                BorderBrush="#22FFFFFF"
+                BorderThickness="1">
+            <Grid x:Name="MiniControlBarWrapper">
+                <StackPanel Orientation="Vertical">
+                    <Grid Height="60" Margin="10,0,0,0">
+                        <Border Width="50" Height="50" CornerRadius="8" Margin="10,5,0,0">
+                            <Image x:Name="MiniCover" Stretch="UniformToFill" Margin="-183,8,166,-21"/>
+                        </Border>
+                        <Canvas>
+                            <TextBlock x:Name="CurrentTrackName"
+                                       Text="Nothing is playing.."
+                                       FontSize="32"
+                                       Foreground="White"
+                                       TextWrapping="NoWrap"
+                                       RenderTransformOrigin="0.5,0.5"
+                                       Height="51"
+                                       Canvas.Left="89"
+                                       Canvas.Top="23"
+                                       Width="313"
+                                       FontFamily="Segoe WP Light">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform x:Name="TrackTransform" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+                        </Canvas>
+                    </Grid>
+
+                    <ProgressBar x:Name="ProgressSlider"
+                                 Minimum="0"
+                                 Maximum="100"
+                                 Value="0"
+                                 Height="52"
+                                 Background="#FF333333"
+                                 Foreground="#FF12C900"
+                                 BorderBrush="{x:Null}"
+                                 Margin="10,5,10,10"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- MediaElement for playback -->
+        <MediaElement x:Name="Player"
+                      AutoPlay="False"
+                      Visibility="Visible"
+                      Width="1" Height="1"
+                      Volume="1.0"/>
+    </Grid>
+</phone:PhoneApplicationPage>

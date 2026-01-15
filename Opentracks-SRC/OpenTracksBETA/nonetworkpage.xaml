@@ -1,0 +1,72 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="OpenTracksBETA.NoNetworkPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Orientation="Portrait">
+
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot1" Background="Transparent">
+
+        <!-- LOCALIZATION NOTE:
+            To localize the displayed strings copy their values to appropriately named
+            keys in the app's neutral language resource file (AppResources.resx) then
+            replace the hard-coded text value between the attributes' quotation marks
+            with the binding clause whose path points to that string name.
+
+            For example:
+
+                Text="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
+
+            This binding points to the template's string resource named "ApplicationTitle".
+
+            Adding supported languages in the Project Properties tab will create a
+            new resx file per language that can carry the translated values of your
+            UI strings. The binding in these examples will cause the value of the
+            attributes to be drawn from the .resx file that matches the
+            CurrentUICulture of the app at run time.
+         -->
+
+        <!--Panorama control-->
+        <phone:Panorama Title="Oops!">
+            <phone:Panorama.Background>
+                <ImageBrush ImageSource="/Assets/bg1.png"/>
+            </phone:Panorama.Background>
+
+            <!--welcome-->
+            <phone:PanoramaItem Header="No Network!">
+                <TextBlock HorizontalAlignment="Left" Margin="16,-22,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="487" Width="400" FontSize="24">
+        	    <Run Text="Seems like you did not connect to the internet. After the BETA 2 Update of OpenTracks, the app now requires network to stream music, connect to a network and restart the app and we can start our music journey again!"/>
+                <LineBreak/>
+                <LineBreak/>
+                <Run Text="Need support / Bugs? email us:"/>
+                <LineBreak/>
+                <Run Text="droidjacks4@gmail.com"/>
+                <LineBreak/>
+                <Run Text="Telegram@chockingnetdude"/>
+                </TextBlock>
+            </phone:PanoramaItem>
+            <!--Panorama item one-->
+            <phone:PanoramaItem Header="App Infos:">
+                <TextBlock HorizontalAlignment="Left" Margin="16,-22,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="487" Width="400" FontSize="24">
+        	    <Run Text="App Version: BETA 10e"/>
+                <LineBreak/>
+                <Run Text="Update: Relaunch 1st"/>
+        	    <LineBreak/>
+        	    <Run Text="*All Music Are Non-Copyrighted"/>
+        	    <LineBreak/>
+        	    <Run Text="OpenTracks for Windows Phone 8.1"/>
+                <LineBreak/>
+                <LineBreak/>
+                <Run Text="Developed by:"/>
+                <LineBreak/>
+                <Run Text="ChockingNetDude"/>
+                <LineBreak/>
+                <LineBreak/>
+                <Run Text="No Network Connected."/>
+                </TextBlock>
+            </phone:PanoramaItem>
+        </phone:Panorama>
+        <MediaElement x:Name="AudioPlayer" AutoPlay="False" />
+    </Grid>
+</phone:PhoneApplicationPage>

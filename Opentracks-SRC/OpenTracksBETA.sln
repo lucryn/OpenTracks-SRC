@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTracksBETA", "OpenTracksBETA\OpenTracksBETA.csproj", "{1ED0E7A5-25DB-45FA-8889-205E9530EE26}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1ED0E7A5-25DB-45FA-8889-205E9530EE26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ED0E7A5-25DB-45FA-8889-205E9530EE26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ED0E7A5-25DB-45FA-8889-205E9530EE26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ED0E7A5-25DB-45FA-8889-205E9530EE26}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
